@@ -5,14 +5,13 @@ var builder=require('botbuilder');
 
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function(){
-  console.log('%s listening to %s', server.name, server.port);
+  console.log('%s listening on %s', server.name, server.url);
 });
+var serverurl = process.env.HOST_PREFIX || server.url;
 
-var APP_ID = "b3ed4a56-9376-4b77-ae85-a0d88635e0e6";
-var PASSWORD = "pie8n96MQYdcrWLPDJj5N0N";
 var connector = new builder.ChatConnector({
-  appId : APP_ID, 				//process.env.MICROSOFT_APP_ID,
-  appPassword: PASSWORD				//process.env.MICROSOFT_APP_PASSWORD
+  appId : process.env.MICROSOFT_APP_ID,
+  appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 var savedAddresses = [];
 
@@ -49,19 +48,34 @@ function sendProactiveMessage(address, alert){
 
 bot.dialog('/', function(session, args){
   var savedAddress = session.message.address;
-  var saved = false;
-  for (var i =0; i< savedAddresses.length; i++){
-    if (savedAddresses[i].id == savedAddress.id){
-	saved = true;
-	break;
+  var usrMsg = session.message.text;
+  if (usrMsg != undefined && usrMsg != null){
+    if ( usrMsg.toLowerCase() == "play" || usrMsg == "玩"){
+      session.send("好，"+savedAddress.user.name+"，我們來玩遊戲");
     }
-  } 
-  if (saved == false)
-    savedAddresses.push(savedAddress);
-  var msg = "你的username:"+savedAddress.user.name+",每分鐘會有一報時訊號"; 
-  session.send(msg);
-  setInterval(() => {sendProactiveMessage(savedAddress);
-  }, 60000);
+    else if (usrMsg.toLowerCase() == "bye" || usrMsg == "離開"){
+      session.endConversation("再見！");
+    }
+    else {
+    var saved = false;
+    for (var i =0; i< savedAddresses.length; i++){
+      if (savedAddresses[i].id == savedAddress.id){
+  	  saved = true;
+	  break;
+      }
+    } 
+    if (saved == false)
+      savedAddresses.push(savedAddress);
+    var msg = "你是"+savedAddress.user.name+",一分鐘後會有一個報時訊號"; 
+    session.send(msg);
+    msg = "測試一：你可以輸入'play'或'玩'或'bye'或'離開'";
+    session.send(msg);
+    msg = "測試二：也可以從 '"+serverurl+"/api/customAlert?msg=訊息' 發佈訊息";
+    session.send(msg);
+    setTimeout(() => {sendProactiveMessage(savedAddress); }, 60000);
+    }
+  }
 });
+
 
 
