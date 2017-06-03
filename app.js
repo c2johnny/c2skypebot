@@ -59,7 +59,7 @@ bot.dialog('/', function(session, args){
     else {
     var saved = false;
     for (var i =0; i< savedAddresses.length; i++){
-      if (savedAddresses[i].id == savedAddress.id){
+      if (savedAddresses[i].user.id == savedAddress.user.id){
   	  saved = true;
 	  break;
       }
