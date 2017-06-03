@@ -1,7 +1,7 @@
 {
   "name": "skypebot",
   "version": "1.0.0",
-  "description": "",
+  "description": "c2 skype bot evaluation",
   "main": "app.js",
   "dependencies": {
     "botbuilder": "^3.8.4",
@@ -9,8 +9,9 @@
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Johnny Chong <johnny@c2square.com>",
   "license": "ISC"
 }
